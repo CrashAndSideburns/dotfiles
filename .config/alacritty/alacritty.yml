@@ -1,0 +1,4 @@
+import:
+  - ~/.config/alacritty/core.yml
+  - ~/.config/alacritty/visuals.yml
+  - ~/.config/alacritty/bindings.yml
