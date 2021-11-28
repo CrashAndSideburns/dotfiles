@@ -1,38 +1,43 @@
-Config { font = "xfc:Source Code Pro:size=12"
-       , additionalFonts = []
-       , borderColor = "black"
-       , border = TopB
-       , bgColor = "black"
-       , fgColor = "grey"
-       , alpha = 255
-       , position = Top
-       , textOffset = -1
-       , iconOffset = -1
-       , lowerOnStart = True
-       , pickBroadest = False
-       , persistent = False
-       , hideOnStart = False
-       , iconRoot = "."
-       , allDesktops = True
-       , overrideRedirect = True
-       , commands = [ Run Weather "EGPF" ["-t","<station>: <tempC>C",
-                                          "-L","18","-H","25",
-                                          "--normal","green",
-                                          "--high","red",
-                                          "--low","lightblue"] 36000
-                    , Run Network "eth0" ["-L","0","-H","32",
-                                          "--normal","green","--high","red"] 10
-                    , Run Network "eth1" ["-L","0","-H","32",
-                                          "--normal","green","--high","red"] 10
-                    , Run Cpu ["-L","3","-H","50",
-                               "--normal","green","--high","red"] 10
-                    , Run Memory ["-t","Mem: <usedratio>%"] 10
-                    , Run Swap [] 10
-                    , Run Com "uname" ["-s","-r"] "" 36000
-                    , Run Date "%a %b %_d %Y %H:%M:%S" "date" 10
+Config { overrideRedirect = False
+
+        -- Use Nerd Font version of Source Code Pro for icons.
+       , font     = "xft:Sauce Code Pro Nerd Font-16"
+
+        -- This is a really dirty hack to get the separators working. An
+        -- additional font is declared which is just a larger version of the
+        -- main font, and then the additional font is used for the separators
+        -- to ensure that they cover the entire bar.
+       , additionalFonts = [ "xft:Sauce Code Pro Nerd Font-24" ]
+       , textOffsets = [ 45 ]
+
+	-- Standard Tokyo Night foreground and background colours.
+       , bgColor  = "#1a1b26"
+       , fgColor  = "#c0caf5"
+
+        -- Position the bar at the bottom, occupying 100% of the width of the
+	-- screen. Force the bar to have a (minimum) height of 64.
+       , position = BottomSize C 100 64
+       , commands = [ Run Cpu              [ "--template"
+                                           , "<fc=#ff9e64>  <total>%</fc>" ]
+					   10
+                    , Run Memory           [ "--template"
+		                           , "<fc=#f7768e>  <used>M (<usedratio>%)</fc>" ]
+					   10
+		    , Run Network "enp8s0" [ "--template"
+		                           , "<fc=#9ece6a> <tx>  <rx></fc>"
+					   , "--suffix"
+					   , "True"]
+					   10
+                    , Run XMonadLog
+		    , Run DiskU            [ ("/", "<fc=#7aa2f7>  <free> free</fc>") ]
+		                           []
+					   10
+                    , Run Date             "<fc=#bb9af7>  %d %b %Y - (%H:%M)</fc>"
+		                           "date"
+					   10
                     ]
-       , sepChar = "%"
-       , alignSep = "}{"
-       , template = "%cpu% | %memory% * %swap% | %eth0% - %eth1% }\
-                    \{ <fc=#ee9a00>%date%</fc>| %EGPF% | %uname%"
+
+	-- Format status bar like
+	-- "CPU | MEMORY | NETWORK } XMONAD { DISK | DATE"
+       , template = " %cpu% <fc=#565f89><fn=1>|</fn></fc> %memory% <fc=#565f89><fn=1>|</fn></fc> %enp8s0% } %XMonadLog% { %disku% <fc=#565f89><fn=1>|</fn></fc> %date% "
        }
